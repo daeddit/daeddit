@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: daeddit
+  jackson:
+    # 반환 JSON에 값이 null인 속성은 제거. (data: null과 같은 속성은 클라이언트에게 전달되지 않음)
+    default-property-inclusion: non_null
   datasource:
     url: jdbc:h2:mem:testdb
   jpa:
