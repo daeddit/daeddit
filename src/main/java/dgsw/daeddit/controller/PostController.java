@@ -2,6 +2,7 @@ package dgsw.daeddit.controller;
 
 import dgsw.daeddit.dto.ApiResponse;
 import dgsw.daeddit.dto.request.PostCreateRequest;
+import dgsw.daeddit.dto.request.PostUpdateRequest;
 import dgsw.daeddit.dto.response.PostResponse;
 import dgsw.daeddit.service.PostService;
 import java.net.URI;
@@ -29,7 +30,9 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<PostResponse>> create(@RequestBody PostCreateRequest request) {
+    public ResponseEntity<ApiResponse<PostResponse>> create(
+        @RequestBody PostCreateRequest request
+    ) {
         PostResponse response = postService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
@@ -47,7 +50,9 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PostResponse>> findById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PostResponse>> findById(
+        @PathVariable Long id
+    ) {
         Optional<PostResponse> resultOpt = postService.findById(id);
         return resultOpt
             .map(postResponse -> ResponseEntity.ok().body(ApiResponse.success(postResponse)))
@@ -58,12 +63,27 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    public void update(@PathVariable Long id) {
-
+    public ResponseEntity<ApiResponse<PostResponse>> update(
+        @PathVariable Long id,
+        @RequestBody PostUpdateRequest request
+    ) {
+        Optional<PostResponse> resultOpt = postService.update(id, request);
+        return resultOpt
+            .map(postResponse -> ResponseEntity.ok().body(ApiResponse.success(postResponse)))
+            .orElseGet(() -> ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."))
+            );
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
+        boolean deleted = postService.delete(id);
+        return deleted ?
+            ResponseEntity.ok().body(ApiResponse.success("게시글 삭제에 성공했습니다."))
+            : ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."));
     }
 
     @GetMapping("/search")

@@ -49,7 +49,6 @@ public class Post extends BaseEntity {
     public void update(String title, String content, Long likes) {
         this.title = Objects.requireNonNull(title, "title");
         this.content = Objects.requireNonNull(content, "content");
-        this.author = Objects.requireNonNull(author, "author");
         this.likes = Objects.requireNonNull(likes, "likes");
     }
 }
