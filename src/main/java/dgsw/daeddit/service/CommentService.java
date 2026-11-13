@@ -17,4 +17,8 @@ public interface CommentService {
     Optional<CommentResponse> update(Long id, CommentUpdateRequest request);
 
     boolean delete(Long id);
+
+    Optional<CommentResponse> like(Long id);
+
+    Optional<CommentResponse> dislike(Long id);
 }

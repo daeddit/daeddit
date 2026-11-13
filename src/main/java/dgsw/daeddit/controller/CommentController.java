@@ -83,6 +83,24 @@ public class CommentController {
                 .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE));
     }
 
+    @PostMapping("/api/comments/{id}/likes")
+    public ResponseEntity<ApiResponse<CommentResponse>> like(@PathVariable Long id) {
+        return commentService.like(id)
+            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
+            .orElseGet(() -> ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+    }
+
+    @PostMapping("/api/comments/{id}/dislikes")
+    public ResponseEntity<ApiResponse<CommentResponse>> dislike(@PathVariable Long id) {
+        return commentService.dislike(id)
+            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
+            .orElseGet(() -> ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+    }
+
     private URI locationOf(Long commentId) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
             .path("/api/comments/{id}")

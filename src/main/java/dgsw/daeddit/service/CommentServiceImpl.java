@@ -84,6 +84,32 @@ public class CommentServiceImpl implements CommentService {
         return true;
     }
 
+    @Override
+    @Transactional
+    public Optional<CommentResponse> like(Long id) {
+        Optional<Comment> commentOpt = commentRepository.findById(id);
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
+            return Optional.empty();
+        }
+        Comment comment = commentOpt.get();
+        comment.addLike();
+        commentRepository.flush();
+        return Optional.of(CommentResponse.from(comment));
+    }
+
+    @Override
+    @Transactional
+    public Optional<CommentResponse> dislike(Long id) {
+        Optional<Comment> commentOpt = commentRepository.findById(id);
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
+            return Optional.empty();
+        }
+        Comment comment = commentOpt.get();
+        comment.addDislike();
+        commentRepository.flush();
+        return Optional.of(CommentResponse.from(comment));
+    }
+
     private Comment resolveParent(Long parentId, Post post) {
         if (parentId == null) {
             return null;
