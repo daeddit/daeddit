@@ -1,6 +1,7 @@
 package dgsw.daeddit.service;
 
 import dgsw.daeddit.dto.request.CommentCreateRequest;
+import dgsw.daeddit.dto.request.CommentUpdateRequest;
 import dgsw.daeddit.dto.response.CommentResponse;
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,8 @@ public interface CommentService {
     Optional<List<CommentResponse>> findByPostId(Long postId);
 
     Optional<CommentResponse> findById(Long id);
+
+    Optional<CommentResponse> update(Long id, CommentUpdateRequest request);
+
+    boolean delete(Long id);
 }

@@ -3,6 +3,7 @@ package dgsw.daeddit.service;
 import dgsw.daeddit.domain.Comment;
 import dgsw.daeddit.domain.Post;
 import dgsw.daeddit.dto.request.CommentCreateRequest;
+import dgsw.daeddit.dto.request.CommentUpdateRequest;
 import dgsw.daeddit.dto.response.CommentResponse;
 import dgsw.daeddit.repository.CommentRepository;
 import dgsw.daeddit.repository.PostRepository;
@@ -51,6 +52,36 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Optional<CommentResponse> findById(Long id) {
         return commentRepository.findById(id).map(CommentResponse::from);
+    }
+
+    @Override
+    @Transactional
+    public Optional<CommentResponse> update(Long id, CommentUpdateRequest request) {
+        Optional<Comment> commentOpt = commentRepository.findById(id);
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
+            return Optional.empty();
+        }
+        Comment comment = commentOpt.get();
+        comment.update(validateContent(request.getContent()));
+        commentRepository.flush();
+        return Optional.of(CommentResponse.from(comment));
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(Long id) {
+        Optional<Comment> commentOpt = commentRepository.findById(id);
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
+            return false;
+        }
+        Comment comment = commentOpt.get();
+        if (commentRepository.existsByParentId(id)) {
+            comment.softDelete();
+            commentRepository.flush();
+        } else {
+            commentRepository.delete(comment);
+        }
+        return true;
     }
 
     private Comment resolveParent(Long parentId, Post post) {

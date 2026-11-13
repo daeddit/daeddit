@@ -2,6 +2,7 @@ package dgsw.daeddit.controller;
 
 import dgsw.daeddit.dto.ApiResponse;
 import dgsw.daeddit.dto.request.CommentCreateRequest;
+import dgsw.daeddit.dto.request.CommentUpdateRequest;
 import dgsw.daeddit.dto.response.CommentResponse;
 import dgsw.daeddit.service.CommentService;
 import java.net.URI;
@@ -9,9 +10,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -57,6 +60,27 @@ public class CommentController {
             .orElseGet(() -> ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+    }
+
+    @PutMapping("/api/comments/{id}")
+    public ResponseEntity<ApiResponse<CommentResponse>> update(
+        @PathVariable Long id,
+        @RequestBody CommentUpdateRequest request
+    ) {
+        return commentService.update(id, request)
+            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
+            .orElseGet(() -> ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+    }
+
+    @DeleteMapping("/api/comments/{id}")
+    public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
+        return commentService.delete(id)
+            ? ResponseEntity.ok().body(ApiResponse.success("댓글 삭제에 성공했습니다."))
+            : ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE));
     }
 
     private URI locationOf(Long commentId) {
