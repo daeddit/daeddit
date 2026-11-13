@@ -87,14 +87,27 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public void search(@RequestParam String query) {
+    public ResponseEntity<ApiResponse<List<PostResponse>>> search(@RequestParam String query) {
+        return ResponseEntity.ok().body(ApiResponse.success(postService.search(query)));
     }
 
     @PutMapping("/{id}/likes")
-    public void like(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PostResponse>> like(@PathVariable Long id) {
+        boolean isOk = postService.like(id);
+        return isOk ?
+            ResponseEntity.ok().body(ApiResponse.success("게시글 좋아요에 성공했습니다."))
+            : ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."));
     }
 
     @DeleteMapping("/{id}/likes")
-    public void unlike(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PostResponse>> unlike(@PathVariable Long id) {
+        boolean isOk = postService.unlike(id);
+        return isOk ?
+            ResponseEntity.ok().body(ApiResponse.success("게시글 싫어요에 성공했습니다."))
+            : ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."));
     }
 }

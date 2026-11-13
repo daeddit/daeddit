@@ -12,6 +12,7 @@ public class PostResponse {
     private String title;
     private String content;
     private String author;
+    private Long likes;
     private String domain;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -23,6 +24,7 @@ public class PostResponse {
             .title(post.getTitle())
             .content(post.getContent())
             .author(post.getAuthor())
+            .likes(post.getLikes())
             .domain(post.getDomain())
             .createdAt(post.getCreatedAt())
             .updatedAt(post.getUpdatedAt())

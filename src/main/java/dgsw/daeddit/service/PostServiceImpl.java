@@ -55,4 +55,35 @@ public class PostServiceImpl implements PostService {
         postRepository.deleteById(id);
         return true;
     }
+
+    @Override
+    public List<PostResponse> search(String query) {
+        return postRepository.findByTitleStartsWith(query).stream().map(PostResponse::from).toList();
+    }
+
+    @Override
+    @Transactional
+    public boolean like(Long id) {
+        Optional<Post> resultOpt = postRepository.findById(id);
+        if(resultOpt.isEmpty()) return false;
+
+        Post post = resultOpt.get();
+        post.update(post.getTitle(), post.getContent(), post.getLikes() + 1);
+        postRepository.flush();
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean unlike(Long id) {
+        Optional<Post> resultOpt = postRepository.findById(id);
+        if(resultOpt.isEmpty()) return false;
+
+        Post post = resultOpt.get();
+        post.update(post.getTitle(), post.getContent(), post.getLikes() - 1);
+        postRepository.flush();
+
+        return true;
+    }
 }

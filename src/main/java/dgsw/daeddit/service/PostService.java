@@ -13,4 +13,7 @@ public interface PostService {
     Optional<PostResponse> findById(Long id);
     Optional<PostResponse> update(Long id, PostUpdateRequest request);
     boolean delete(Long id);
+    List<PostResponse> search(String query);
+    boolean like(Long id);
+    boolean unlike(Long id);
 }
