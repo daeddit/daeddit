@@ -26,7 +26,7 @@ public class DomainResponse {
                 .domainName(domain.getDomainName())
                 .description(domain.getDescription())
                 .createdAt(domain.getCreatedAt())
-                .updatedAt(domain.getCreatedAt())
+                .updatedAt(domain.getUpdatedAt())
                 .build();
     }
 
