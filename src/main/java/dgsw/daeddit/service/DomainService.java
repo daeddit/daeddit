@@ -13,9 +13,9 @@ public interface DomainService {
 
     List<DomainResponse> findAll();
 
-    Optional<DomainResponse> findById(Long id);
+    DomainResponse findById(Long id);
 
-    Optional<DomainResponse> update(Long id, DomainUpdateRequest request);
+    DomainResponse update(Long id, DomainUpdateRequest request);
 
     boolean delete(Long id);
 }

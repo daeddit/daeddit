@@ -48,13 +48,8 @@ public class DomainController {
     public ResponseEntity<ApiResponse<DomainResponse>> findById(
             @PathVariable Long id
     ) {
-        Optional<DomainResponse> resultOpt = domainService.findById(id);
-        return resultOpt
-                .map(domainResponse -> ResponseEntity.ok().body(ApiResponse.success(domainResponse)))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.fail(NOT_FOUND_MESSAGE))
-                );
+        DomainResponse result = domainService.findById(id);
+        return ResponseEntity.ok().body(ApiResponse.success(result));
     }
 
     @PutMapping("/{id}")
@@ -62,22 +57,13 @@ public class DomainController {
             @PathVariable Long id,
             @RequestBody DomainUpdateRequest request
     ) {
-        Optional<DomainResponse> resultOpt = domainService.update(id, request);
-        return resultOpt
-                .map(domainResponse -> ResponseEntity.ok().body(ApiResponse.success(domainResponse)))
-                .orElseGet(() -> ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.fail(NOT_FOUND_MESSAGE))
-                );
+        DomainResponse result = domainService.update(id, request);
+        return ResponseEntity.ok().body(ApiResponse.success(result));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
-        boolean deleted = domainService.delete(id);
-        return deleted ?
-                ResponseEntity.ok().body(ApiResponse.success("도메인 삭제에 성공했습니다."))
-                : ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(NOT_FOUND_MESSAGE));
+        domainService.delete(id);
+        return ResponseEntity.ok().body(ApiResponse.success("도메인 삭제에 성공했습니다."));
     }
 }
