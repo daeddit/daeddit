@@ -5,6 +5,7 @@ import dgsw.daeddit.domain.Post;
 import dgsw.daeddit.dto.request.CommentCreateRequest;
 import dgsw.daeddit.dto.request.CommentUpdateRequest;
 import dgsw.daeddit.dto.response.CommentResponse;
+import dgsw.daeddit.exception.NotFoundException;
 import dgsw.daeddit.repository.CommentRepository;
 import dgsw.daeddit.repository.PostRepository;
 import java.util.List;
@@ -23,11 +24,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Optional<CommentResponse> create(Long postId, CommentCreateRequest request) {
+    public CommentResponse create(Long postId, CommentCreateRequest request) {
         Optional<Post> postOpt = postRepository.findById(postId);
-        if (postOpt.isEmpty()) {
-            return Optional.empty();
-        }
+        if (postOpt.isEmpty()) throw new NotFoundException();
         Post post = postOpt.get();
 
         String content = validateContent(request.getContent());
@@ -35,45 +34,40 @@ public class CommentServiceImpl implements CommentService {
         Comment parent = resolveParent(request.getParentId(), post);
 
         Comment saved = commentRepository.save(Comment.create(post, parent, content, author));
-        return Optional.of(CommentResponse.from(saved));
+        return CommentResponse.from(saved);
     }
 
     @Override
-    public Optional<List<CommentResponse>> findByPostId(Long postId) {
-        if (!postRepository.existsById(postId)) {
-            return Optional.empty();
-        }
-        List<CommentResponse> comments = commentRepository.findByPostIdOrderByIdAsc(postId).stream()
+    public List<CommentResponse> findByPostId(Long postId) {
+        if (!postRepository.existsById(postId)) throw new NotFoundException();
+        return commentRepository.findByPostIdOrderByIdAsc(postId).stream()
             .map(CommentResponse::from)
             .toList();
-        return Optional.of(comments);
     }
 
     @Override
-    public Optional<CommentResponse> findById(Long id) {
-        return commentRepository.findById(id).map(CommentResponse::from);
+    public CommentResponse findById(Long id) {
+        Optional<Comment> result = commentRepository.findById(id);
+        if(result.isEmpty()) throw new NotFoundException();
+        return CommentResponse.from(result.get());
     }
 
     @Override
     @Transactional
-    public Optional<CommentResponse> update(Long id, CommentUpdateRequest request) {
+    public CommentResponse update(Long id, CommentUpdateRequest request) {
         Optional<Comment> commentOpt = commentRepository.findById(id);
-        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
-            return Optional.empty();
-        }
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) throw new NotFoundException();
         Comment comment = commentOpt.get();
         comment.update(validateContent(request.getContent()));
         commentRepository.flush();
-        return Optional.of(CommentResponse.from(comment));
+        return CommentResponse.from(comment);
     }
 
     @Override
     @Transactional
     public boolean delete(Long id) {
         Optional<Comment> commentOpt = commentRepository.findById(id);
-        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
-            return false;
-        }
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) throw new NotFoundException();
         Comment comment = commentOpt.get();
         if (commentRepository.existsByParentId(id)) {
             comment.softDelete();
@@ -86,28 +80,24 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Optional<CommentResponse> like(Long id) {
+    public CommentResponse like(Long id) {
         Optional<Comment> commentOpt = commentRepository.findById(id);
-        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
-            return Optional.empty();
-        }
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) throw new NotFoundException();
         Comment comment = commentOpt.get();
         comment.addLike();
         commentRepository.flush();
-        return Optional.of(CommentResponse.from(comment));
+        return CommentResponse.from(comment);
     }
 
     @Override
     @Transactional
-    public Optional<CommentResponse> dislike(Long id) {
+    public CommentResponse dislike(Long id) {
         Optional<Comment> commentOpt = commentRepository.findById(id);
-        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) {
-            return Optional.empty();
-        }
+        if (commentOpt.isEmpty() || commentOpt.get().isDeleted()) throw new NotFoundException();
         Comment comment = commentOpt.get();
         comment.addDislike();
         commentRepository.flush();
-        return Optional.of(CommentResponse.from(comment));
+        return CommentResponse.from(comment);
     }
 
     private Comment resolveParent(Long parentId, Post post) {

@@ -1,5 +1,6 @@
 package dgsw.daeddit.controller;
 
+import dgsw.daeddit.domain.Comment;
 import dgsw.daeddit.dto.ApiResponse;
 import dgsw.daeddit.dto.request.CommentCreateRequest;
 import dgsw.daeddit.dto.request.CommentUpdateRequest;
@@ -33,33 +34,24 @@ public class CommentController {
         @PathVariable Long postId,
         @RequestBody CommentCreateRequest request
     ) {
-        return commentService.create(postId, request)
-            .map(response -> ResponseEntity
+        CommentResponse response = commentService.create(postId, request);
+        return ResponseEntity
                 .created(locationOf(response.getId()))
-                .body(ApiResponse.success(response)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(POST_NOT_FOUND_MESSAGE)));
+                .body(ApiResponse.success(response));
     }
 
     @GetMapping("/api/posts/{postId}/comments")
     public ResponseEntity<ApiResponse<List<CommentResponse>>> findByPostId(
         @PathVariable Long postId
     ) {
-        return commentService.findByPostId(postId)
-            .map(comments -> ResponseEntity.ok().body(ApiResponse.success(comments)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(POST_NOT_FOUND_MESSAGE)));
+        List<CommentResponse> response = commentService.findByPostId(postId);
+        return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @GetMapping("/api/comments/{id}")
     public ResponseEntity<ApiResponse<CommentResponse>> findById(@PathVariable Long id) {
-        return commentService.findById(id)
-            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+        CommentResponse response = commentService.findById(id);
+        return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @PutMapping("/api/comments/{id}")
@@ -67,38 +59,26 @@ public class CommentController {
         @PathVariable Long id,
         @RequestBody CommentUpdateRequest request
     ) {
-        return commentService.update(id, request)
-            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+        CommentResponse response = commentService.update(id, request);
+        return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @DeleteMapping("/api/comments/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
-        return commentService.delete(id)
-            ? ResponseEntity.ok().body(ApiResponse.success("댓글 삭제에 성공했습니다."))
-            : ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE));
+        commentService.delete(id);
+        return ResponseEntity.ok().body(ApiResponse.success("댓글 삭제에 성공했습니다."));
     }
 
     @PostMapping("/api/comments/{id}/likes")
     public ResponseEntity<ApiResponse<CommentResponse>> like(@PathVariable Long id) {
-        return commentService.like(id)
-            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+        CommentResponse response = commentService.like(id);
+        return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     @PostMapping("/api/comments/{id}/dislikes")
     public ResponseEntity<ApiResponse<CommentResponse>> dislike(@PathVariable Long id) {
-        return commentService.dislike(id)
-            .map(response -> ResponseEntity.ok().body(ApiResponse.success(response)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail(COMMENT_NOT_FOUND_MESSAGE)));
+        CommentResponse response = commentService.dislike(id);
+        return ResponseEntity.ok().body(ApiResponse.success(response));
     }
 
     private URI locationOf(Long commentId) {

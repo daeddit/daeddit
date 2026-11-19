@@ -8,17 +8,17 @@ import java.util.Optional;
 
 public interface CommentService {
 
-    Optional<CommentResponse> create(Long postId, CommentCreateRequest request);
+    CommentResponse create(Long postId, CommentCreateRequest request);
 
-    Optional<List<CommentResponse>> findByPostId(Long postId);
+    List<CommentResponse> findByPostId(Long postId);
 
-    Optional<CommentResponse> findById(Long id);
+    CommentResponse findById(Long id);
 
-    Optional<CommentResponse> update(Long id, CommentUpdateRequest request);
+    CommentResponse update(Long id, CommentUpdateRequest request);
 
     boolean delete(Long id);
 
-    Optional<CommentResponse> like(Long id);
+    CommentResponse like(Long id);
 
-    Optional<CommentResponse> dislike(Long id);
+    CommentResponse dislike(Long id);
 }
