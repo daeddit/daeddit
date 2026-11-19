@@ -1,6 +1,5 @@
 package dgsw.daeddit.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,7 +34,8 @@ class PostControllerTest {
 
     @Test
     void create_success() throws Exception {
-        // POST /api/articles
+        // POST /api/posts
+
         // given
         PostCreateRequest request = new PostCreateRequest("제목1", "내용1", "작성자1", "주제1");
         LocalDateTime now = LocalDateTime.now();
