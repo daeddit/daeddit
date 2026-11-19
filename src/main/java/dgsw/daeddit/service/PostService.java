@@ -10,8 +10,8 @@ public interface PostService {
 
     PostResponse create(PostCreateRequest request);
     List<PostResponse> findAll();
-    Optional<PostResponse> findById(Long id);
-    Optional<PostResponse> update(Long id, PostUpdateRequest request);
+    PostResponse findById(Long id);
+    PostResponse update(Long id, PostUpdateRequest request);
     boolean delete(Long id);
     List<PostResponse> search(String query);
     boolean like(Long id);

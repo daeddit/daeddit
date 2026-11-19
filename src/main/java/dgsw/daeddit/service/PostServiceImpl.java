@@ -4,6 +4,7 @@ import dgsw.daeddit.domain.Post;
 import dgsw.daeddit.dto.request.PostCreateRequest;
 import dgsw.daeddit.dto.request.PostUpdateRequest;
 import dgsw.daeddit.dto.response.PostResponse;
+import dgsw.daeddit.exception.NotFoundException;
 import dgsw.daeddit.repository.PostRepository;
 import java.util.List;
 import java.util.Optional;
@@ -30,28 +31,29 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<PostResponse> findById(Long id) {
+    public PostResponse findById(Long id) {
         Optional<Post> result = postRepository.findById(id);
-        return result.map(PostResponse::from);
+        if(result.isEmpty()) throw new NotFoundException();
+        return PostResponse.from(result.get());
     }
 
     @Override
     @Transactional
-    public Optional<PostResponse> update(Long id, PostUpdateRequest request) {
+    public PostResponse update(Long id, PostUpdateRequest request) {
         Optional<Post> resultOpt = postRepository.findById(id);
-        if(resultOpt.isEmpty()) return Optional.empty();
+        if(resultOpt.isEmpty()) throw new NotFoundException();
 
         Post post = resultOpt.get();
         post.update(request.getTitle(), request.getContent(), post.getLikes());
         postRepository.flush();
 
-        return Optional.of(PostResponse.from(post));
+        return PostResponse.from(post);
     }
 
     @Override
     @Transactional
     public boolean delete(Long id) {
-        if(!postRepository.existsById(id)) return false;
+        if(!postRepository.existsById(id)) throw new NotFoundException();
         postRepository.deleteById(id);
         return true;
     }
@@ -65,7 +67,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public boolean like(Long id) {
         Optional<Post> resultOpt = postRepository.findById(id);
-        if(resultOpt.isEmpty()) return false;
+        if(resultOpt.isEmpty()) throw new NotFoundException();
 
         Post post = resultOpt.get();
         post.update(post.getTitle(), post.getContent(), post.getLikes() + 1);
@@ -78,7 +80,7 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public boolean unlike(Long id) {
         Optional<Post> resultOpt = postRepository.findById(id);
-        if(resultOpt.isEmpty()) return false;
+        if(resultOpt.isEmpty()) throw new NotFoundException();
 
         Post post = resultOpt.get();
         post.update(post.getTitle(), post.getContent(), post.getLikes() - 1);

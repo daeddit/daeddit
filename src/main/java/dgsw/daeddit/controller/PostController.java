@@ -53,13 +53,8 @@ public class PostController {
     public ResponseEntity<ApiResponse<PostResponse>> findById(
         @PathVariable Long id
     ) {
-        Optional<PostResponse> resultOpt = postService.findById(id);
-        return resultOpt
-            .map(postResponse -> ResponseEntity.ok().body(ApiResponse.success(postResponse)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."))
-            );
+        PostResponse result = postService.findById(id);
+        return ResponseEntity.ok().body(ApiResponse.success(result));
     }
 
     @PutMapping("/{id}")
@@ -67,23 +62,14 @@ public class PostController {
         @PathVariable Long id,
         @RequestBody PostUpdateRequest request
     ) {
-        Optional<PostResponse> resultOpt = postService.update(id, request);
-        return resultOpt
-            .map(postResponse -> ResponseEntity.ok().body(ApiResponse.success(postResponse)))
-            .orElseGet(() -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."))
-            );
+        PostResponse result = postService.update(id, request);
+        return ResponseEntity.ok().body(ApiResponse.success(result));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
-        boolean deleted = postService.delete(id);
-        return deleted ?
-            ResponseEntity.ok().body(ApiResponse.success("게시글 삭제에 성공했습니다."))
-            : ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."));
+        postService.delete(id);
+        return ResponseEntity.ok().body(ApiResponse.success("게시글 삭제에 성공했습니다."));
     }
 
     @GetMapping("/search")
@@ -93,21 +79,13 @@ public class PostController {
 
     @PutMapping("/{id}/likes")
     public ResponseEntity<ApiResponse<PostResponse>> like(@PathVariable Long id) {
-        boolean isOk = postService.like(id);
-        return isOk ?
-            ResponseEntity.ok().body(ApiResponse.success("게시글 좋아요에 성공했습니다."))
-            : ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."));
+        postService.like(id);
+        return ResponseEntity.ok().body(ApiResponse.success("게시글 좋아요에 성공했습니다."));
     }
 
     @DeleteMapping("/{id}/likes")
     public ResponseEntity<ApiResponse<PostResponse>> unlike(@PathVariable Long id) {
-        boolean isOk = postService.unlike(id);
-        return isOk ?
-            ResponseEntity.ok().body(ApiResponse.success("게시글 싫어요에 성공했습니다."))
-            : ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.fail("게시글을 찾을 수 없습니다."));
+        postService.unlike(id);
+        return ResponseEntity.ok().body(ApiResponse.success("게시글 싫어요에 성공했습니다."));
     }
 }
