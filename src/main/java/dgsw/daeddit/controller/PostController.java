@@ -8,6 +8,8 @@ import dgsw.daeddit.service.PostService;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> create(
-        @RequestBody PostCreateRequest request
+            @Valid @RequestBody PostCreateRequest request
     ) {
         PostResponse response = postService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -60,7 +62,7 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PostResponse>> update(
         @PathVariable Long id,
-        @RequestBody PostUpdateRequest request
+        @Valid @RequestBody PostUpdateRequest request
     ) {
         PostResponse result = postService.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.success(result));

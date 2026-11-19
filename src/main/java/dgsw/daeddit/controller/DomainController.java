@@ -5,6 +5,7 @@ import dgsw.daeddit.dto.request.DomainCreateRequest;
 import dgsw.daeddit.dto.request.DomainUpdateRequest;
 import dgsw.daeddit.dto.response.DomainResponse;
 import dgsw.daeddit.service.DomainService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class DomainController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<DomainResponse>> create(
-            @RequestBody DomainCreateRequest request
+            @Valid @RequestBody DomainCreateRequest request
     ) {
         DomainResponse response = domainService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -55,7 +56,7 @@ public class DomainController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<DomainResponse>> update(
             @PathVariable Long id,
-            @RequestBody DomainUpdateRequest request
+            @Valid @RequestBody DomainUpdateRequest request
     ) {
         DomainResponse result = domainService.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.success(result));

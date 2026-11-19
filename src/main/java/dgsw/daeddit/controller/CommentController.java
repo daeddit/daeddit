@@ -8,6 +8,8 @@ import dgsw.daeddit.dto.response.CommentResponse;
 import dgsw.daeddit.service.CommentService;
 import java.net.URI;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,7 @@ public class CommentController {
     @PostMapping("/api/posts/{postId}/comments")
     public ResponseEntity<ApiResponse<CommentResponse>> create(
         @PathVariable Long postId,
-        @RequestBody CommentCreateRequest request
+        @Valid @RequestBody CommentCreateRequest request
     ) {
         CommentResponse response = commentService.create(postId, request);
         return ResponseEntity
@@ -57,7 +59,7 @@ public class CommentController {
     @PutMapping("/api/comments/{id}")
     public ResponseEntity<ApiResponse<CommentResponse>> update(
         @PathVariable Long id,
-        @RequestBody CommentUpdateRequest request
+        @Valid @RequestBody CommentUpdateRequest request
     ) {
         CommentResponse response = commentService.update(id, request);
         return ResponseEntity.ok().body(ApiResponse.success(response));
