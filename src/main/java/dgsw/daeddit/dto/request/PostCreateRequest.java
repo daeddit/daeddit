@@ -1,7 +1,10 @@
 package dgsw.daeddit.dto.request;
 
+import dgsw.daeddit.domain.Domain;
 import dgsw.daeddit.domain.Post;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,8 +27,9 @@ public class PostCreateRequest {
     @Size(max = Post.AUTHOR_MAX_LENGTH, message = "작성자는 30자 이하여야 합니다.")
     private String author;
 
-    @NotBlank(message = "도메인은 필수입니다.")
-    private String domain;
+    @NotNull(message = "도메인은 필수입니다.")
+    @Positive
+    private Long domainId;
 
-    public Post toEntity() { return Post.create(title, content, author, domain); }
+    public Post toEntity(Domain domain) { return Post.create(title, content, author, domain); }
 }

@@ -1,5 +1,6 @@
 package dgsw.daeddit.dto.response;
 
+import dgsw.daeddit.domain.Domain;
 import dgsw.daeddit.domain.Post;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -13,7 +14,7 @@ public class PostResponse {
     private String content;
     private String author;
     private Long likes;
-    private String domain;
+    private Domain domain;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

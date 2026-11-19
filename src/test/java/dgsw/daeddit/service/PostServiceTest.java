@@ -1,6 +1,8 @@
 package dgsw.daeddit.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import dgsw.daeddit.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,9 +18,7 @@ class PostServiceTest {
     void delete_fail() {
         // given
         final Long id = 999L;
-        // when
-        boolean result = postService.delete(id);
-        // then
-        assertThat(result).isFalse();
+        // when & then
+        assertThrows(NotFoundException.class, () -> postService.delete(id));
     }
 }

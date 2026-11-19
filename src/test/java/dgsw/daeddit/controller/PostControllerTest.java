@@ -3,6 +3,7 @@ package dgsw.daeddit.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import dgsw.daeddit.domain.Domain;
 import dgsw.daeddit.dto.request.PostCreateRequest;
 import dgsw.daeddit.dto.response.PostResponse;
 import dgsw.daeddit.service.PostService;
@@ -37,8 +38,9 @@ class PostControllerTest {
         // POST /api/posts
 
         // given
-        PostCreateRequest request = new PostCreateRequest("제목1", "내용1", "작성자1", "주제1");
-        LocalDateTime now = LocalDateTime.now();
+        Domain domain = Domain.create("테스트", "입니다.");
+        PostCreateRequest request = new PostCreateRequest("제목1", "내용1", "작성자1", 1L);
+        LocalDateTime timestamp = LocalDateTime.of(2025, 1, 1, 12, 0, 1);
         PostResponse postResponse = PostResponse
             .builder()
             .id(1L)
@@ -46,9 +48,9 @@ class PostControllerTest {
             .content("내용1")
             .author("작성자1")
             .likes(0L)
-            .domain("주제1")
-            .createdAt(now)
-            .updatedAt(now)
+            .domain(domain)
+            .createdAt(timestamp)
+            .updatedAt(timestamp)
             .build();
         BDDMockito.given(
             postService.create(
@@ -70,8 +72,8 @@ class PostControllerTest {
             .andExpect(jsonPath("$.data.content").value(request.getContent()))
             .andExpect(jsonPath("$.data.author").value(request.getAuthor()))
             .andExpect(jsonPath("$.data.likes").value(0L))
-            .andExpect(jsonPath("$.data.domain").value(request.getDomain()))
-            .andExpect(jsonPath("$.data.createdAt").value(now.toString()))
-            .andExpect(jsonPath("$.data.updatedAt").value(now.toString()));
+            .andExpect(jsonPath("$.data.domain.domainName").value(domain.getDomainName()))
+            .andExpect(jsonPath("$.data.createdAt").value(timestamp.toString()))
+            .andExpect(jsonPath("$.data.updatedAt").value(timestamp.toString()));
     }
 }

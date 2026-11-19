@@ -2,6 +2,8 @@ package dgsw.daeddit.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -31,10 +33,11 @@ public class Post extends BaseEntity {
     private Long likes;
 
     // TODO: Domain 엔티티 병합됐을 때 Domain에 대한 ManyToOne으로 바꿉니다.
-    @Column(nullable = false)
-    private String domain;
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    private Domain domain;
 
-    private Post(String title, String content, String author, String domain) {
+    private Post(String title, String content, String author, Domain domain) {
         this.title = Objects.requireNonNull(title, "title");
         this.content = Objects.requireNonNull(content, "content");
         this.author = Objects.requireNonNull(author, "author");
@@ -42,7 +45,7 @@ public class Post extends BaseEntity {
         this.domain = domain;
     }
 
-    public static Post create(String title, String content, String author, String domain) {
+    public static Post create(String title, String content, String author, Domain domain) {
         return new Post(title, content, author, domain);
     }
 

@@ -2,7 +2,9 @@ package dgsw.daeddit;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import dgsw.daeddit.domain.Domain;
 import dgsw.daeddit.domain.Post;
+import dgsw.daeddit.repository.DomainRepository;
 import dgsw.daeddit.repository.PostRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,13 @@ import org.springframework.test.web.servlet.MockMvc;
 class TempStatus {
 
     @Autowired private MockMvc mvc;
+    @Autowired private DomainRepository domainRepository;
     @Autowired private PostRepository postRepository;
 
     @Test
     void 검증실패_응답확인() throws Exception {
-        Long postId = postRepository.save(Post.create("제목", "내용", "작성자", "backend")).getId();
+        Domain domain = domainRepository.save(Domain.create("backend", "test"));
+        Long postId = postRepository.save(Post.create("제목", "내용", "작성자", domain)).getId();
 
         mvc.perform(post("/api/posts/{id}/comments", postId)
                 .contentType(MediaType.APPLICATION_JSON)

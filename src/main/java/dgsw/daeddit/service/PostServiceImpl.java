@@ -1,10 +1,12 @@
 package dgsw.daeddit.service;
 
+import dgsw.daeddit.domain.Domain;
 import dgsw.daeddit.domain.Post;
 import dgsw.daeddit.dto.request.PostCreateRequest;
 import dgsw.daeddit.dto.request.PostUpdateRequest;
 import dgsw.daeddit.dto.response.PostResponse;
 import dgsw.daeddit.exception.NotFoundException;
+import dgsw.daeddit.repository.DomainRepository;
 import dgsw.daeddit.repository.PostRepository;
 import java.util.List;
 import java.util.Optional;
@@ -18,11 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final DomainRepository domainRepository;
 
     @Override
     @Transactional
     public PostResponse create(PostCreateRequest request) {
-        return PostResponse.from(postRepository.save(request.toEntity()));
+       Optional<Domain> domainOpt = domainRepository.findById(request.getDomainId());
+       if(domainOpt.isEmpty()) throw new NotFoundException();
+
+       return PostResponse.from(postRepository.save(request.toEntity(domainOpt.get())));
     }
 
     @Override
