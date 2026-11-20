@@ -17,30 +17,35 @@ class DomainRepositoryTest {
     @Autowired
     private DomainRepository domainRepository;
 
-    @Sql("/data.sql")
     @Test
     void existsByDomainNameTest() {
         assertThat(domainRepository.existsByDomainName("백엔드")).isTrue();
         assertThat(domainRepository.existsByDomainName("게임")).isFalse();
     }
 
-    @Sql("/data.sql")
     @Test
     void existsByDomainNameAndIdNotTest1() {
 
-        Long backendId = domainRepository.findByDomainName("백엔드");
+        Long backendId = findIdByName("백엔드");
 
         assertThat(domainRepository.existsByDomainNameAndIdNot("백엔드", backendId)).isFalse();
     }
 
-    @Sql("/data.sql")
     @Test
     void existsByDomainNameAndIdNotTest2() {
 
-        Long frontendId = domainRepository.findByDomainName("프론트엔드");
+        Long frontendId = findIdByName("프론트엔드");
 
         assertThat(domainRepository.existsByDomainNameAndIdNot("백엔드", frontendId)).isTrue();
 
+    }
+
+    private Long findIdByName(String domainName) {
+        return domainRepository.findAll().stream()
+                .filter(domain -> domain.getDomainName().equals(domainName))
+                .findFirst()
+                .orElseThrow()
+                .getId();
     }
 
 }
