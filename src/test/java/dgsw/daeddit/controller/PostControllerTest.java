@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import dgsw.daeddit.domain.Domain;
 import dgsw.daeddit.dto.request.PostCreateRequest;
+import dgsw.daeddit.dto.response.DomainResponse;
 import dgsw.daeddit.dto.response.PostResponse;
 import dgsw.daeddit.service.PostService;
 import java.time.LocalDateTime;
@@ -48,7 +49,7 @@ class PostControllerTest {
             .content("내용1")
             .author("작성자1")
             .likes(0L)
-            .domain(domain)
+            .domain(DomainResponse.from(domain))
             .createdAt(timestamp)
             .updatedAt(timestamp)
             .build();
