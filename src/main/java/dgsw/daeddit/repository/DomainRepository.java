@@ -10,4 +10,6 @@ public interface DomainRepository extends JpaRepository<Domain, Long> {
     boolean existsByDomainName(String domainName);
 
     boolean existsByDomainNameAndIdNot(String domainName, Long id);
+
+    Long findByDomainName(String domainName);
 }
